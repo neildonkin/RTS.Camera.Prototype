@@ -152,13 +152,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9178c5a9043be4fa3ae766b11e0f4809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalSpeed: 5
-  fastSpeed: 15
-  movementSpeed: 2
-  movementTime: 2
-  rotationAmount: 2
+  cameraTransform: {fileID: 1687258585}
+  normalSpeed: 0.5
+  fastSpeed: 3
+  movementSpeed: 1
+  movementTime: 5
+  rotationAmount: 1
+  zoomAmount: {x: 0, y: -2, z: 2}
   newPosition: {x: 0, y: 0, z: 0}
   newRotation: {x: 0, y: 0, z: 0, w: 0}
+  newZoom: {x: 0, y: 0, z: 0}
 --- !u!4 &186389917
 Transform:
   m_ObjectHideFlags: 0
