@@ -79,12 +79,12 @@ public class CameraController : MonoBehaviour
         // Camera zoom
         if (Input.GetKey(KeyCode.R))
         {
-            newZoom += zoomAmount;
+            newZoom -= zoomAmount;
         }
 
         if (Input.GetKey((KeyCode.F)))
         {
-            newZoom -= zoomAmount;
+            newZoom += zoomAmount;
         }
 
         transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementTime);
