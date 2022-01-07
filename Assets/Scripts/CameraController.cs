@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    private float _movementSpeed;
+    
     public Transform cameraTransform;
     
     public float normalSpeed;
     public float fastSpeed;
-    public float movementSpeed;
     public float movementTime;
     public float rotationAmount;
     public Vector3 zoomAmount;
@@ -37,32 +38,32 @@ public class CameraController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            movementSpeed = fastSpeed;
+            _movementSpeed = fastSpeed;
         }
         else
         {
-            movementSpeed = normalSpeed;
+            _movementSpeed = normalSpeed;
         }
 
         // Camera panning
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            newPosition += (transform.forward * movementSpeed);
+            newPosition += (transform.forward * _movementSpeed);
         }
 
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            newPosition += (transform.forward * -movementSpeed);
+            newPosition += (transform.forward * -_movementSpeed);
         }
 
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            newPosition += (transform.right * movementSpeed);
+            newPosition += (transform.right * _movementSpeed);
         }
 
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            newPosition += (transform.right * -movementSpeed);
+            newPosition += (transform.right * -_movementSpeed);
         }
 
         // Camera rotation
