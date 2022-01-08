@@ -18,6 +18,9 @@ public class CameraController : MonoBehaviour
     public Quaternion newRotation;
     public Vector3 newZoom;
 
+    public Vector3 dragStartPosition;
+    public Vector3 dragCurrentPosition;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -31,9 +34,47 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        HandleMouseInput();
         HandleMovementInput();
     }
 
+    void HandleMouseInput()
+    {
+        var mainCam = Camera.main;
+
+        if (mainCam != null)
+        {
+            const int leftMouseButton = 0;
+
+            if (Input.GetMouseButtonDown(leftMouseButton))
+            {
+                // Mouse drag has begun
+                var plane = new Plane(Vector3.up, Vector3.zero);
+
+                var ray = mainCam.ScreenPointToRay(Input.mousePosition);
+
+                if (plane.Raycast(ray, out var entry))
+                {
+                    dragStartPosition = ray.GetPoint(entry);
+                }
+            }
+
+            if (Input.GetMouseButton(leftMouseButton))
+            {
+                // Mouse drag has ended
+                var plane = new Plane(Vector3.up, Vector3.zero);
+
+                var ray = mainCam.ScreenPointToRay(Input.mousePosition);
+
+                if (plane.Raycast(ray, out var entry))
+                {
+                    dragCurrentPosition = ray.GetPoint(entry);
+                    newPosition = transform.position + dragStartPosition - dragCurrentPosition;
+                }
+            }
+        }
+    }
+    
     void HandleMovementInput()
     {
         if (Input.GetKey(KeyCode.LeftShift))
