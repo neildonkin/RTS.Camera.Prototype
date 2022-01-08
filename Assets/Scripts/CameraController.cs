@@ -12,8 +12,9 @@ public class CameraController : MonoBehaviour
     public float fastSpeed;
     public float movementTime;
     public float rotationAmount;
-    public Vector3 zoomAmount;
-
+    public float zoomAmount;
+    
+    private Vector3 _zoomAmount;
     private Vector3 _newPosition;
     private Quaternion _newRotation;
     private Vector3 _newZoom;
@@ -26,6 +27,7 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _zoomAmount = new Vector3(0, -zoomAmount, zoomAmount);
         var camTransform = transform;
         _newPosition = camTransform.position;
         _newRotation = camTransform.rotation;
@@ -49,7 +51,7 @@ public class CameraController : MonoBehaviour
         // Scroll
         if (Input.mouseScrollDelta.y != 0)
         {
-            _newZoom += Input.mouseScrollDelta.y * zoomAmount;
+            _newZoom += Input.mouseScrollDelta.y * _zoomAmount;
         }
         
         if (mainCam != null)
@@ -145,12 +147,12 @@ public class CameraController : MonoBehaviour
         // Camera zoom
         if (Input.GetKey(KeyCode.R))
         {
-            _newZoom -= zoomAmount;
+            _newZoom -= _zoomAmount;
         }
 
         if (Input.GetKey((KeyCode.F)))
         {
-            _newZoom += zoomAmount;
+            _newZoom += _zoomAmount;
         }
 
         Transform tempTrans;
