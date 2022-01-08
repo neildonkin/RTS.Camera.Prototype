@@ -12,9 +12,9 @@ public class CameraController : MonoBehaviour
      * has been adapted to improve performance.
      */
     private float _movementSpeed;
-    
+
     public Transform cameraTransform;
-    
+
     public float normalSpeed;
     public float fastSpeed;
     public float movementTime;
@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
     public float zoomAmount;
     public float minZoom;
     public float maxZoom;
-    
+
     private Vector3 _zoomAmount;
     private Vector3 _newPosition;
     private Quaternion _newRotation;
@@ -32,15 +32,15 @@ public class CameraController : MonoBehaviour
     private Vector3 _dragCurrentPosition;
     private Vector3 _rotateStartPosition;
     private Vector3 _rotateCurrentPosition;
-    
+
     private Camera _mainCam;
-    
+
     // Start is called before the first frame update
     private void Start()
     {
         // Accessing Camera.main is expensive, so only do it once
         _mainCam = Camera.main;
-        
+
         _zoomAmount = new Vector3(0, -zoomAmount, zoomAmount);
         var camTransform = transform;
         _newPosition = camTransform.position;
@@ -59,38 +59,36 @@ public class CameraController : MonoBehaviour
     {
         const int leftMouseButton = 0;
         const int middleMouseButton = 2;
-        
+
         // Scroll
         if (Input.mouseScrollDelta.y != 0)
         {
             _newZoom += Input.mouseScrollDelta.y * _zoomAmount;
         }
 
-        // Drag
-        if (Input.GetMouseButtonDown(leftMouseButton))
+        var wasLeftMouseButtonPressedThiFrame = Input.GetMouseButtonDown(leftMouseButton);
+        var isLeftMouseButtonDown = Input.GetMouseButton(leftMouseButton);
+
+        if (wasLeftMouseButtonPressedThiFrame || isLeftMouseButtonDown)
         {
-            // Mouse drag has begun
             var plane = new Plane(Vector3.up, Vector3.zero);
-
             var ray = _mainCam.ScreenPointToRay(Input.mousePosition);
+            var isRayCast = plane.Raycast(ray, out var entry);
 
-            if (plane.Raycast(ray, out var entry))
+            if (isRayCast)
             {
-                _dragStartPosition = ray.GetPoint(entry);
-            }
-        }
+                if (wasLeftMouseButtonPressedThiFrame)
+                {
+                    // Mouse drag has begun
+                    _dragStartPosition = ray.GetPoint(entry);
+                }
 
-        if (Input.GetMouseButton(leftMouseButton))
-        {
-            // Mouse drag has ended
-            var plane = new Plane(Vector3.up, Vector3.zero);
-
-            var ray = _mainCam.ScreenPointToRay(Input.mousePosition);
-
-            if (plane.Raycast(ray, out var entry))
-            {
-                _dragCurrentPosition = ray.GetPoint(entry);
-                _newPosition = transform.position + _dragStartPosition - _dragCurrentPosition;
+                if (isLeftMouseButtonDown)
+                {
+                    // Mouse drag has ended
+                    _dragCurrentPosition = ray.GetPoint(entry);
+                    _newPosition = transform.position + _dragStartPosition - _dragCurrentPosition;
+                }
             }
         }
 
@@ -143,7 +141,7 @@ public class CameraController : MonoBehaviour
         {
             _newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
         }
-        
+
         // Camera zoom
         if (Input.GetKey(KeyCode.R))
         {
@@ -158,10 +156,12 @@ public class CameraController : MonoBehaviour
         // Ensure we don't zoom too far in or out
         _newZoom.y = Mathf.Clamp(_newZoom.y, minZoom, maxZoom);
         _newZoom.z = Mathf.Clamp(_newZoom.z, minZoom, maxZoom);
-        
+
         Transform tempTrans;
-        (tempTrans = transform).position = Vector3.Lerp(transform.position, _newPosition, Time.deltaTime * movementTime);
+        (tempTrans = transform).position =
+            Vector3.Lerp(transform.position, _newPosition, Time.deltaTime * movementTime);
         transform.rotation = Quaternion.Lerp(tempTrans.rotation, _newRotation, Time.deltaTime * movementTime);
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, _newZoom, Time.deltaTime * movementTime);
+        cameraTransform.localPosition =
+            Vector3.Lerp(cameraTransform.localPosition, _newZoom, Time.deltaTime * movementTime);
     }
 }
