@@ -40,6 +40,11 @@ public class CameraController : MonoBehaviour
 
     void HandleMouseInput()
     {
+        if (Input.mouseScrollDelta.y != 0)
+        {
+            newZoom += Input.mouseScrollDelta.y * zoomAmount;
+        }
+        
         var mainCam = Camera.main;
 
         if (mainCam != null)
