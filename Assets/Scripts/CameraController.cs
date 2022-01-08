@@ -20,6 +20,8 @@ public class CameraController : MonoBehaviour
 
     public Vector3 dragStartPosition;
     public Vector3 dragCurrentPosition;
+    public Vector3 rotateStartPosition;
+    public Vector3 rotateCurrentPosition;
     
     // Start is called before the first frame update
     void Start()
@@ -40,17 +42,19 @@ public class CameraController : MonoBehaviour
 
     void HandleMouseInput()
     {
+        const int leftMouseButton = 0;
+        const int middleMouseButton = 2;
+        var mainCam = Camera.main;
+        
+        // Scroll
         if (Input.mouseScrollDelta.y != 0)
         {
             newZoom += Input.mouseScrollDelta.y * zoomAmount;
         }
         
-        var mainCam = Camera.main;
-
         if (mainCam != null)
         {
-            const int leftMouseButton = 0;
-
+            // Drag
             if (Input.GetMouseButtonDown(leftMouseButton))
             {
                 // Mouse drag has begun
@@ -76,6 +80,21 @@ public class CameraController : MonoBehaviour
                     dragCurrentPosition = ray.GetPoint(entry);
                     newPosition = transform.position + dragStartPosition - dragCurrentPosition;
                 }
+            }
+
+            // Rotation
+            if (Input.GetMouseButtonDown(middleMouseButton))
+            {
+                rotateStartPosition = Input.mousePosition;
+            }
+
+            if (Input.GetMouseButton(middleMouseButton))
+            {
+                rotateCurrentPosition = Input.mousePosition;
+
+                var difference = rotateStartPosition - rotateCurrentPosition;
+                rotateStartPosition = rotateCurrentPosition;
+                newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
             }
         }
     }
