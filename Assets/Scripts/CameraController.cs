@@ -13,6 +13,8 @@ public class CameraController : MonoBehaviour
     public float movementTime;
     public float rotationAmount;
     public float zoomAmount;
+    public float minZoom;
+    public float maxZoom;
     
     private Vector3 _zoomAmount;
     private Vector3 _newPosition;
@@ -155,6 +157,10 @@ public class CameraController : MonoBehaviour
             _newZoom += _zoomAmount;
         }
 
+        // Ensure we don't zoom too far in or out
+        _newZoom.y = Mathf.Clamp(_newZoom.y, minZoom, maxZoom);
+        _newZoom.z = Mathf.Clamp(_newZoom.z, minZoom, maxZoom);
+        
         Transform tempTrans;
         (tempTrans = transform).position = Vector3.Lerp(transform.position, _newPosition, Time.deltaTime * movementTime);
         transform.rotation = Quaternion.Lerp(tempTrans.rotation, _newRotation, Time.deltaTime * movementTime);

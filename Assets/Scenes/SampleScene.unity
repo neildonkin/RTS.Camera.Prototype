@@ -158,6 +158,8 @@ MonoBehaviour:
   movementTime: 5
   rotationAmount: 1
   zoomAmount: 2
+  minZoom: 20
+  maxZoom: 180
 --- !u!4 &186389917
 Transform:
   m_ObjectHideFlags: 0
