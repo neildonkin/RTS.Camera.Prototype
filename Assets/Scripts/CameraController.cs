@@ -49,7 +49,6 @@ public class CameraController : MonoBehaviour
         _newZoom = cameraTransform.localPosition;
     }
 
-    // Update is called once per frame
     private void LateUpdate()
     {
         HandleMouseInput();
