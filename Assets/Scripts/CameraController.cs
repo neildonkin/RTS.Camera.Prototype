@@ -18,10 +18,10 @@ public class CameraController : MonoBehaviour
     public Quaternion newRotation;
     public Vector3 newZoom;
 
-    public Vector3 dragStartPosition;
-    public Vector3 dragCurrentPosition;
-    public Vector3 rotateStartPosition;
-    public Vector3 rotateCurrentPosition;
+    private Vector3 _dragStartPosition;
+    private Vector3 _dragCurrentPosition;
+    private Vector3 _rotateStartPosition;
+    private Vector3 _rotateCurrentPosition;
     
     // Start is called before the first frame update
     void Start()
@@ -64,7 +64,7 @@ public class CameraController : MonoBehaviour
 
                 if (plane.Raycast(ray, out var entry))
                 {
-                    dragStartPosition = ray.GetPoint(entry);
+                    _dragStartPosition = ray.GetPoint(entry);
                 }
             }
 
@@ -77,23 +77,23 @@ public class CameraController : MonoBehaviour
 
                 if (plane.Raycast(ray, out var entry))
                 {
-                    dragCurrentPosition = ray.GetPoint(entry);
-                    newPosition = transform.position + dragStartPosition - dragCurrentPosition;
+                    _dragCurrentPosition = ray.GetPoint(entry);
+                    newPosition = transform.position + _dragStartPosition - _dragCurrentPosition;
                 }
             }
 
             // Rotation
             if (Input.GetMouseButtonDown(middleMouseButton))
             {
-                rotateStartPosition = Input.mousePosition;
+                _rotateStartPosition = Input.mousePosition;
             }
 
             if (Input.GetMouseButton(middleMouseButton))
             {
-                rotateCurrentPosition = Input.mousePosition;
+                _rotateCurrentPosition = Input.mousePosition;
 
-                var difference = rotateStartPosition - rotateCurrentPosition;
-                rotateStartPosition = rotateCurrentPosition;
+                var difference = _rotateStartPosition - _rotateCurrentPosition;
+                _rotateStartPosition = _rotateCurrentPosition;
                 newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
             }
         }
