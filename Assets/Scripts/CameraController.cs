@@ -101,9 +101,10 @@ public class CameraController : MonoBehaviour
         if (!Input.GetMouseButton(middleMouseButton)) return;
         _rotateCurrentPosition = Input.mousePosition;
 
+        const float rotationDivisionAmount = 5;
         var difference = _rotateStartPosition - _rotateCurrentPosition;
         _rotateStartPosition = _rotateCurrentPosition;
-        _newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
+        _newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / rotationDivisionAmount));
     }
 
     private void HandleMovementInput()
