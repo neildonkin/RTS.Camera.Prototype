@@ -157,10 +157,7 @@ MonoBehaviour:
   fastSpeed: 3
   movementTime: 5
   rotationAmount: 1
-  zoomAmount: {x: 0, y: -2, z: 2}
-  newPosition: {x: 0, y: 0, z: 0}
-  newRotation: {x: 0, y: 0, z: 0, w: 0}
-  newZoom: {x: 0, y: 0, z: 0}
+  zoomAmount: 2
 --- !u!4 &186389917
 Transform:
   m_ObjectHideFlags: 0
