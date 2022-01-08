@@ -2,6 +2,15 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    /*
+     * This code is based on this excellent tutorial:
+     *
+     * https://youtu.be/rnqF6S7PfFA
+     *
+     * It does not include the camera follow feature,
+     * the zoom level is clamped and the tutorial code
+     * has been adapted to improve performance.
+     */
     private float _movementSpeed;
     
     public Transform cameraTransform;
