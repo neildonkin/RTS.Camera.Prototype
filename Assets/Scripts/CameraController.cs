@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -26,9 +24,14 @@ public class CameraController : MonoBehaviour
     private Vector3 _rotateStartPosition;
     private Vector3 _rotateCurrentPosition;
     
+    private Camera _mainCam;
+    
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
+        // Accessing Camera.main is expensive, so only do it once
+        _mainCam = Camera.main;
+        
         _zoomAmount = new Vector3(0, -zoomAmount, zoomAmount);
         var camTransform = transform;
         _newPosition = camTransform.position;
@@ -38,101 +41,88 @@ public class CameraController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    private void LateUpdate()
     {
         HandleMouseInput();
         HandleMovementInput();
     }
 
-    void HandleMouseInput()
+    private void HandleMouseInput()
     {
         const int leftMouseButton = 0;
         const int middleMouseButton = 2;
-        var mainCam = Camera.main;
         
         // Scroll
         if (Input.mouseScrollDelta.y != 0)
         {
             _newZoom += Input.mouseScrollDelta.y * _zoomAmount;
         }
-        
-        if (mainCam != null)
+
+        // Drag
+        if (Input.GetMouseButtonDown(leftMouseButton))
         {
-            // Drag
-            if (Input.GetMouseButtonDown(leftMouseButton))
+            // Mouse drag has begun
+            var plane = new Plane(Vector3.up, Vector3.zero);
+
+            var ray = _mainCam.ScreenPointToRay(Input.mousePosition);
+
+            if (plane.Raycast(ray, out var entry))
             {
-                // Mouse drag has begun
-                var plane = new Plane(Vector3.up, Vector3.zero);
-
-                var ray = mainCam.ScreenPointToRay(Input.mousePosition);
-
-                if (plane.Raycast(ray, out var entry))
-                {
-                    _dragStartPosition = ray.GetPoint(entry);
-                }
-            }
-
-            if (Input.GetMouseButton(leftMouseButton))
-            {
-                // Mouse drag has ended
-                var plane = new Plane(Vector3.up, Vector3.zero);
-
-                var ray = mainCam.ScreenPointToRay(Input.mousePosition);
-
-                if (plane.Raycast(ray, out var entry))
-                {
-                    _dragCurrentPosition = ray.GetPoint(entry);
-                    _newPosition = transform.position + _dragStartPosition - _dragCurrentPosition;
-                }
-            }
-
-            // Rotation
-            if (Input.GetMouseButtonDown(middleMouseButton))
-            {
-                _rotateStartPosition = Input.mousePosition;
-            }
-
-            if (Input.GetMouseButton(middleMouseButton))
-            {
-                _rotateCurrentPosition = Input.mousePosition;
-
-                var difference = _rotateStartPosition - _rotateCurrentPosition;
-                _rotateStartPosition = _rotateCurrentPosition;
-                _newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
+                _dragStartPosition = ray.GetPoint(entry);
             }
         }
+
+        if (Input.GetMouseButton(leftMouseButton))
+        {
+            // Mouse drag has ended
+            var plane = new Plane(Vector3.up, Vector3.zero);
+
+            var ray = _mainCam.ScreenPointToRay(Input.mousePosition);
+
+            if (plane.Raycast(ray, out var entry))
+            {
+                _dragCurrentPosition = ray.GetPoint(entry);
+                _newPosition = transform.position + _dragStartPosition - _dragCurrentPosition;
+            }
+        }
+
+        // Rotation
+        if (Input.GetMouseButtonDown(middleMouseButton))
+        {
+            _rotateStartPosition = Input.mousePosition;
+        }
+
+        if (!Input.GetMouseButton(middleMouseButton)) return;
+        _rotateCurrentPosition = Input.mousePosition;
+
+        var difference = _rotateStartPosition - _rotateCurrentPosition;
+        _rotateStartPosition = _rotateCurrentPosition;
+        _newRotation *= Quaternion.Euler(Vector3.up * (-difference.x / 5f));
     }
-    
-    void HandleMovementInput()
+
+    private void HandleMovementInput()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            _movementSpeed = fastSpeed;
-        }
-        else
-        {
-            _movementSpeed = normalSpeed;
-        }
+        _movementSpeed = Input.GetKey(KeyCode.LeftShift) ? fastSpeed : normalSpeed;
 
         // Camera panning
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            _newPosition += (transform.forward * _movementSpeed);
+            _newPosition += transform.forward * _movementSpeed;
         }
 
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            _newPosition += (transform.forward * -_movementSpeed);
+            _newPosition += transform.forward * -_movementSpeed;
         }
 
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            _newPosition += (transform.right * _movementSpeed);
+            _newPosition += transform.right * _movementSpeed;
         }
 
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            _newPosition += (transform.right * -_movementSpeed);
+            _newPosition += transform.right * -_movementSpeed;
         }
 
         // Camera rotation
@@ -152,7 +142,7 @@ public class CameraController : MonoBehaviour
             _newZoom -= _zoomAmount;
         }
 
-        if (Input.GetKey((KeyCode.F)))
+        if (Input.GetKey(KeyCode.F))
         {
             _newZoom += _zoomAmount;
         }
